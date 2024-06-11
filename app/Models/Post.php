@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -17,7 +18,10 @@ class Post extends Model
         'auth_id',
         'tags',
     ];
-
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
     /**
      * List all posts or filter based on request parameters.
      *
