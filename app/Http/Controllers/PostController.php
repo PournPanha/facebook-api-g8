@@ -10,25 +10,18 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $posts = Post::list($request);
+        return response()->json(['success' => true, 'data' => $posts], 200);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $post = Post::store($request);
+        return response()->json(['success' => true, 'data' => $post], 201);
     }
 
     /**
@@ -36,23 +29,15 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return response()->json(['success' => true, 'data' => $post], 200);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Post $post)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $updatedPost = Post::store($request, $post->id);
+        return response()->json(['success' => true, 'data' => $updatedPost], 200);
     }
 
     /**
@@ -60,6 +45,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return response()->json(['success' => true, 'message' => 'Post deleted successfully'], 200);
     }
 }
