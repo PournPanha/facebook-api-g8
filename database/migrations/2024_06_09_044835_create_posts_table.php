@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->integer('auth_id');
             $table->string('tags')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
