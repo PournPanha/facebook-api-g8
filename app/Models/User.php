@@ -26,7 +26,10 @@ class User extends Authenticatable
         'email',
         'password',
     ];
-
+    public function likes()
+    {
+        return $this->belongsToMany(Post::class, 'likes')->withTimestamps();
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

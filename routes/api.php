@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\LikeController;
+use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
@@ -29,3 +32,19 @@ Route::delete('/post/delete/{id}', [PostController::class, 'destroy']);
 Route::get('/post/{id}/comment', [CommentController::class, 'index'])->middleware('auth:sanctum');
 Route::post('/post/{id}/comment', [CommentController::class, 'store'])->middleware('auth:sanctum');
 Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->middleware('auth:sanctum');
+Route::post('/register', [AuthController::class,'register']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user/profile', [UserController::class, 'profile']);
+    Route::put('/user/profile/update', [UserController::class, 'updateProfile']);
+    Route::post('/user/profile/picture', [UserController::class, 'uploadProfileImage']);
+});
+
+// Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail']);
+// Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('posts/{post}/like', [LikeController::class, 'likePost']);
+    Route::delete('posts/{post}/unlike', [LikeController::class, 'unlikePost']);
+    Route::get('posts/{post}/likes', [LikeController::class, 'getPostLikes']); 
+});
