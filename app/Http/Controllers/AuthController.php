@@ -47,6 +47,7 @@ class AuthController extends Controller
         
         return response()->json(['message' => 'Logout successful'], 200);
     }
+
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

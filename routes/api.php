@@ -19,9 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
-
+Route::post('/register', [AuthController::class,'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 
 Route::get('/post/list',[PostController::class,'index'])->middleware('auth:sanctum');
 Route::post('/post/create', [PostController::class, 'store'])->middleware('auth:sanctum');
@@ -47,7 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::post('friend-requests/send/{receiver}', [FriendRequestController::class, 'sendRequest']);
-// });
 Route::post('send-friend-request', [FriendRequestController::class, 'sendFriendRequest']);
+
+
+
