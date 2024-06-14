@@ -3,57 +3,69 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Js;
 
 class UserController extends Controller
 {
+
+    public function index()
+    {
+        $user = Auth::user();
+        return response()->json([
+            'message' => 'Profile retrieved successfully',
+            'data' => $user
+        ], 200);
+    }
+
     /**
-     * Display a listing of the resource.
+     * Update the user's profile.
      */
-    public function profile(Request $request)
+    public function update(Request $request)
     {
-        if (Auth::check()) {
-            return $request->user();
-        } else {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
-    }
-    public function updateProfile(Request $request)
-    {
-        if (Auth::check()) {
-            $user = $request->user();
-            $user->update($request->all());
-            return response()->json(['message' => 'Profile updated successfully', 'user' => $user]);
-        } else {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
-    }
+        $user = Auth::user();
 
-    public function uploadProfileImage(Request $request)
-    {
-        if (Auth::check()) {
-            $user = $request->user();
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required|string|max:255',
+        //     'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        //     'profile_image' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg|max:2048',
+        // ]);
 
-            if ($request->hasFile('profile_image')) {
-                $file = $request->file('profile_image');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('profile_images', $fileName, 'public');
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
 
-                // Update user's profile image path in the database
-                $user->profile_image = $filePath;
-                $user->save();
+        $user->name = $request->name;
+        $user->email = $request->email;
 
-                return response()->json(['message' => 'Profile image uploaded successfully']);
-            } else {
-                return response()->json(['error' => 'No file uploaded'], 400);
+        if ($request->hasFile('profile_image')) {
+            // Delete the old profile image if it exists
+            if ($user->profile_image) {
+                Storage::disk('public')->delete($user->profile_image);
             }
-        } else {
-            return response()->json(['error' => 'Unauthenticated'], 401);
+            // Store the new profile image
+            $path = $request->file('profile_image')->store('profile_images', 'public');
+            $user->profile_image = $path;
+        }
+
+        try {
+            $user->save();
+            return response()->json([
+                'message' => 'Profile updated successfully',
+                'data' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update profile',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
-
-    
 
     
 }

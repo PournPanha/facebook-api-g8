@@ -17,23 +17,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Authentication routes
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class,'register']);
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
 
+// user route
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user/profile', [UserController::class, 'profile']);
-    Route::put('/user/profile/update', [UserController::class, 'updateProfile']);
-    Route::post('/user/profile/picture', [UserController::class, 'uploadProfileImage']);
+    Route::get('/profile/view', [UserController::class, 'index'])->name('profile.view');
+    Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
 });
 
-Route::get('/post/list',[PostController::class,'index'])->middleware('auth:sanctum');
-Route::post('/post/create', [PostController::class, 'store'])->middleware('auth:sanctum');
-Route::get('/post/show/{id}',[PostController::class, 'show']);
-Route::put('/post/update/{id}', [PostController::class, 'update']);
-Route::delete('/post/delete/{id}', [PostController::class, 'destroy']);
+// post route
+Route::prefix('post')->group(function () {
+    Route::get('/list', [PostController::class, 'index'])->middleware('auth:sanctum');
+    Route::post('/create', [PostController::class, 'store'])->middleware('auth:sanctum');
+    Route::get('/show/{id}', [PostController::class, 'show']);
+    Route::put('/update/{id}', [PostController::class, 'update']);
+    Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+});
 
+// Comment routes
 Route::get('/post/{id}/comment', [CommentController::class, 'index'])->middleware('auth:sanctum');
 Route::post('/post/{id}/comment', [CommentController::class, 'store'])->middleware('auth:sanctum');
 Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->middleware('auth:sanctum');
