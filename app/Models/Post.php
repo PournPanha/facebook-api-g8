@@ -22,6 +22,10 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
+    public function likes()
+    {
+        return $this->belongsToMany(User::class, 'likes')->withTimestamps();
+    }
     /**
      * List all posts or filter based on request parameters.
      *
@@ -35,8 +39,6 @@ class Post extends Model
         if ($request->has('title')) {
             $query->where('title', 'like', '%' . $request->input('title') . '%');
         }
-
-        // Log the SQL query for debugging
         Log::info($query->toSql(), $query->getBindings());
 
         return $query->get();
@@ -52,8 +54,6 @@ class Post extends Model
     public static function store(Request $request, $id = null)
     {
         $data = $request->only('title', 'content', 'auth_id', 'tags');
-
-        // Validate and sanitize the input data
         $validatedData = [
             'title' => $data['title'] ?? '',
             'content' => $data['content'] ?? '',

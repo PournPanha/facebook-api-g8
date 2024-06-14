@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\LikeController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
@@ -42,3 +44,15 @@ Route::prefix('post')->group(function () {
 Route::get('/post/{id}/comment', [CommentController::class, 'index'])->middleware('auth:sanctum');
 Route::post('/post/{id}/comment', [CommentController::class, 'store'])->middleware('auth:sanctum');
 Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->middleware('auth:sanctum');
+Route::post('/register', [AuthController::class,'register']);
+
+
+// Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail']);
+// Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
+
+// Like route
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('posts/{post}/like', [LikeController::class, 'likePost']);
+    Route::delete('posts/{post}/unlike', [LikeController::class, 'unlikePost']);
+    Route::get('posts/{post}/likes', [LikeController::class, 'getPostLikes']); 
+});

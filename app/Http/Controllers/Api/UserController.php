@@ -30,15 +30,15 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        // $validator = Validator::make($request->all(), [
-        //     'name' => 'required|string|max:255',
-        //     'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-        //     'profile_image' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg|max:2048',
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg|max:2048',
+        ]);
 
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $user->name = $request->name;
         $user->email = $request->email;
@@ -66,6 +66,4 @@ class UserController extends Controller
             ], 500);
         }
     }
-
-    
 }

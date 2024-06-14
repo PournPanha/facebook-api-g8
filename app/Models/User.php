@@ -27,7 +27,10 @@ class User extends Authenticatable
         'password',
         'profile_image',
     ];
-
+    public function likes()
+    {
+        return $this->belongsToMany(Post::class, 'likes')->withTimestamps();
+    }
     /**
      * The attributes that should be hidden for serialization.
      *
