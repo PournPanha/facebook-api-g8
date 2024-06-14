@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\FriendRequestController;
 use App\Http\Controllers\Api\LikeController;
-use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
@@ -40,11 +40,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/profile/picture', [UserController::class, 'uploadProfileImage']);
 });
 
-// Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail']);
-// Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('posts/{post}/like', [LikeController::class, 'likePost']);
     Route::delete('posts/{post}/unlike', [LikeController::class, 'unlikePost']);
     Route::get('posts/{post}/likes', [LikeController::class, 'getPostLikes']); 
 });
+
+
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::post('friend-requests/send/{receiver}', [FriendRequestController::class, 'sendRequest']);
+// });
+Route::post('send-friend-request', [FriendRequestController::class, 'sendFriendRequest']);
