@@ -15,7 +15,9 @@ class Post extends Model
     protected $fillable = [
         'title',
         'content',
-        'auth_id',
+        'image',
+        'video',
+        'user_id',
         'tags',
     ];
     public function comments()
@@ -26,6 +28,11 @@ class Post extends Model
     {
         return $this->belongsToMany(User::class, 'likes')->withTimestamps();
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     /**
      * List all posts or filter based on request parameters.
      *
@@ -53,11 +60,13 @@ class Post extends Model
      */
     public static function store(Request $request, $id = null)
     {
-        $data = $request->only('title', 'content', 'auth_id', 'tags');
+        $data = $request->only('title', 'content','image','video', 'user_id', 'tags');
         $validatedData = [
             'title' => $data['title'] ?? '',
             'content' => $data['content'] ?? '',
-            'auth_id' => $data['auth_id'] ?? null,
+            'image' => $data['image'] ?? '',
+            'video' => $data['video'] ?? '',
+            'user_id' => $data['user_id'] ?? null,
             'tags' => $data['tags'] ?? '',
         ];
 

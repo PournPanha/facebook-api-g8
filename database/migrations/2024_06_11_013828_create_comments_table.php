@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('post_id');
             $table->text('content');
-            $table->integer('auth_id');
+            $table->integer('user_id');
             $table->softDeletes();
             $table->timestamps();
         });
