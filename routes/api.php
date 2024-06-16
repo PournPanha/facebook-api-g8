@@ -38,9 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // firend request
     Route::post('/friends/{user}/request', [FriendRequestController::class, 'sendRequest']);
     Route::post('/friends/{user}/accept', [FriendRequestController::class, 'acceptRequest']);
-    Route::post('/friends/{user}/decline', [FriendRequestController::class, 'declineRequest']);
+    Route::post('/friends/{user}/reject', [FriendRequestController::class, 'declineRequest']);
     Route::get('/friends/list/requests', [FriendRequestController::class, 'index']);
-    Route::delete('/friends/{user}', [FriendRequestController::class, 'remove']);
+    Route::delete('/friends/{user}/remove', [FriendRequestController::class, 'remove']);
 });
 
 
