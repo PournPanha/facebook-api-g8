@@ -33,12 +33,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/post/show/{id}', [PostController::class, 'show']);
     Route::put('/post/update/{id}', [PostController::class, 'update']);
     Route::delete('/post/delete/{id}', [PostController::class, 'destroy']);
+
+    Route::post('/posts/{postId}/comments', [PostController::class, 'addComment']);
+    Route::get('/posts/{postId}/comments', [PostController::class, 'getComments']);
+    Route::delete('/posts/{postId}/comments/{commentId}' , [PostController::class, 'deleteComment']);
+
+    Route::post('/posts/{postId}/like', [PostController::class, 'likePost']);
+    Route::delete('/posts/{postId}/unlike', [PostController::class, 'unlikePost']);
+    Route::get('/posts/{postId}/likes', [PostController::class, 'getLikes']);
 });
 
-Route::get('/post/{id}/comment', [CommentController::class, 'index'])->middleware('auth:sanctum');
-Route::post('/comments', [CommentController::class, 'store'])->middleware('auth:sanctum');
-Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->middleware('auth:sanctum');
-Route::post('/register', [AuthController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/profile', [UserController::class, 'profile']);
@@ -46,11 +50,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/profile/picture', [UserController::class, 'uploadProfileImage']);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('posts/{post}/like', [LikeController::class, 'likePost']);
-    Route::delete('posts/{post}/unlike', [LikeController::class, 'unlikePost']);
-    Route::get('posts/{post}/likes', [LikeController::class, 'getPostLikes']);
-});
 
 
-Route::post('send-friend-request', [FriendRequestController::class, 'sendFriendRequest']);
