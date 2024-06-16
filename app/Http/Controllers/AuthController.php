@@ -6,9 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-// use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -44,26 +42,35 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
-        
+
         return response()->json(['message' => 'Logout successful'], 200);
     }
 
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|string|email|max:255|unique:users',
-            'password'  => 'required|string|min:8',
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|string|email|max:255|unique:users',
+            'password'       => 'required|string|min:8',
+            'profile_image'  => 'required|image|mimes:jpeg,png,jpg,gif|max:2048' // Updated profile image validation
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
 
+        // Handle the profile image upload
+        if ($request->hasFile('profile_image')) {
+            $profileImage = $request->file('profile_image');
+            $profileImageName = time() . '.' . $profileImage->getClientOriginalExtension();
+            $profileImagePath = $profileImage->storeAs('profile_images', $profileImageName, 'public');
+        }
+
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => bcrypt($request->password),
+            'name'           => $request->name,
+            'email'          => $request->email,
+            'password'       => bcrypt($request->password),
+            'profile_image'  => $profileImagePath // Save the profile image path in the user's record
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -74,7 +81,6 @@ class AuthController extends Controller
             'token_type'    => 'Bearer'
         ], 201);
     }
-    
     public function index(Request $request)
     {
         $user = $request->user();
@@ -85,5 +91,4 @@ class AuthController extends Controller
             'data' => $user,
         ]);
     }
-   
 }

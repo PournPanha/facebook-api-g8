@@ -19,12 +19,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 
+// Authentication routes
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
+
+// user route
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/profile/view', [UserController::class, 'index'])->name('profile.view');
+    Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
+});
 
 /// post routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -41,13 +47,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{postId}/like', [PostController::class, 'likePost']);
     Route::delete('/posts/{postId}/unlike', [PostController::class, 'unlikePost']);
     Route::get('/posts/{postId}/likes', [PostController::class, 'getLikes']);
-});
-
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user/profile', [UserController::class, 'profile']);
-    Route::put('/user/profile/update', [UserController::class, 'updateProfile']);
-    Route::post('/user/profile/picture', [UserController::class, 'uploadProfileImage']);
 });
 
 
