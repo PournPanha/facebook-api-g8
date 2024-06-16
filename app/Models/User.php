@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -67,15 +68,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public static function list(){
-        $user = self::all();
-        return $user;
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
     }
-    // public static function store($request, $id = null)
-    // {
-    //     $user = $request->only('name', 'email', 'password', 'profile_image');
-    //     $user = self::updateOrCreate(['id' => $id], $user);
-    //     return $user;
-    // }
+
+    public function sentFriendRequests()
+    {
+        return $this->hasMany(FriendRequest::class, 'sender_id');
+    }
+
+    public function receivedFriendRequests()
+    {
+        return $this->hasMany(FriendRequest::class, 'receiver_id');
+    }
+
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friend_requests', 'sender_id', 'receiver_id')
+            ->wherePivot('status', 'accepted')
+            ->withTimestamps();
+    }
+
+
+    
 }

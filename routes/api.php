@@ -26,13 +26,24 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
 
+Route::post('password/email', [AuthController::class, 'forgotPassword']);
+Route::post('password/reset', [AuthController::class, 'resetPassword']);
+
 // user route
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile/view', [UserController::class, 'index'])->name('profile.view');
-    Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [UserController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
+
+
+    // firend request
+    Route::post('/friends/{user}/request', [FriendRequestController::class, 'sendRequest']);
+    Route::post('/friends/{user}/accept', [FriendRequestController::class, 'acceptRequest']);
+    Route::post('/friends/{user}/decline', [FriendRequestController::class, 'declineRequest']);
+    Route::get('/friends/list/requests', [FriendRequestController::class, 'index']);
+    Route::delete('/friends/{user}', [FriendRequestController::class, 'remove']);
 });
 
-/// post routes
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/post/list', [PostController::class, 'index']);
     Route::post('/post/create', [PostController::class, 'store']);
@@ -48,6 +59,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/posts/{postId}/unlike', [PostController::class, 'unlikePost']);
     Route::get('/posts/{postId}/likes', [PostController::class, 'getLikes']);
 });
-
-
 
