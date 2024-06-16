@@ -54,14 +54,23 @@ class User extends Authenticatable
         ];
     }
 
-    public static function list(){
-        $user = self::all();
-        return $user;
+    public function sentFriendRequests()
+    {
+        return $this->hasMany(FriendRequest::class, 'sender_id');
     }
-    // public static function store($request, $id = null)
-    // {
-    //     $user = $request->only('name', 'email', 'password', 'profile_image');
-    //     $user = self::updateOrCreate(['id' => $id], $user);
-    //     return $user;
-    // }
+
+    public function receivedFriendRequests()
+    {
+        return $this->hasMany(FriendRequest::class, 'receiver_id');
+    }
+
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friend_requests', 'sender_id', 'receiver_id')
+            ->wherePivot('status', 'accepted')
+            ->withTimestamps();
+    }
+
+
+    
 }

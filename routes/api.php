@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\FriendController;
+use App\Http\Controllers\Api\FriendRequestController;
 use App\Http\Controllers\Api\LikeController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\UserController;
@@ -27,8 +29,14 @@ Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
 
 // user route
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile/view', [UserController::class, 'index'])->name('profile.view');
-    Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [UserController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
+
+    Route::post('/friends/{user}/request', [FriendRequestController::class, 'sendRequest']);
+    Route::post('/friends/{user}/accept', [FriendRequestController::class, 'acceptRequest']);
+    Route::post('/friends/{user}/decline', [FriendRequestController::class, 'declineRequest']);
+    Route::get('/friends/list/requests', [FriendRequestController::class, 'index']);
+    Route::delete('/friends/{user}', [FriendRequestController::class, 'remove']);
 });
 
 // post route
@@ -56,3 +64,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('posts/{post}/unlike', [LikeController::class, 'unlikePost']);
     Route::get('posts/{post}/likes', [LikeController::class, 'getPostLikes']); 
 });
+
+// Route::middleware('auth')->group(function () {
+//     // Friends
+//     Route::post('/friends/{user}/request', [FriendController::class, 'sendRequest']);
+//     Route::post('/friends/{user}/accept', [FriendController::class, 'acceptRequest']);
+//     Route::post('/friends/{user}/decline', [FriendController::class, 'declineRequest']);
+//     Route::get('/friends', [FriendController::class, 'index']);
+//     Route::delete('/friends/{user}', [FriendController::class, 'remove']);
+// });
