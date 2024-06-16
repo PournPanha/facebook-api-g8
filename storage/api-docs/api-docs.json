@@ -12,9 +12,21 @@
                 ],
                 "summary": "Get the authenticated user's details",
                 "operationId": "b70905c3804ac0196a066fc4256bc24c",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token for authentication",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer {token}"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "User profile details  successfully",
+                        "description": "User profile details successfully retrieved",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -47,7 +59,8 @@
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Unauthenticated"
                                         }
                                     },
                                     "type": "object"
@@ -64,17 +77,29 @@
             }
         },
         "/api/profile/update": {
-            "put": {
+            "post": {
                 "tags": [
                     "User"
                 ],
-                "summary": "Update the authenticated user's profile",
-                "operationId": "4a3073fcce286d966c7519a61751bf52",
+                "summary": "Update the authenticated user's profile including profile image",
+                "operationId": "ddca02dc77d237f384f23b11d81c3b73",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token for authentication",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer {token}"
+                        }
+                    }
+                ],
                 "requestBody": {
-                    "description": "Updated user information",
+                    "description": "Updated user information and profile image",
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "name",
@@ -88,7 +113,8 @@
                                         "type": "string"
                                     },
                                     "profile_image": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -223,6 +249,18 @@
                 ],
                 "summary": "Logout the current user",
                 "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token for authentication",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer {token}"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Logout successful",

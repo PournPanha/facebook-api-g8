@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -73,7 +74,7 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
+/**
      * @OA\Post(
      *     path="/api/logout",
      *     summary="Logout the current user",
@@ -94,12 +95,26 @@ class AuthController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *             example="Bearer {token}"
+     *         ),
+     *         description="Bearer token for authentication"
      *     )
      * )
      */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $token = $request->user()->currentAccessToken();
+
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+        }
 
         return response()->json(['message' => 'Logout successful'], 200);
     }
@@ -167,66 +182,9 @@ class AuthController extends Controller
             'token_type'    => 'Bearer'
         ], 201);
     }
-    public function forgotPassword(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-
-        // Generate and save password reset token
-        $token = $user->createToken('password-reset')->plainTextToken;
-
-        // Example: Send email with reset link containing $token
-        // Mail::to($user->email)->send(new ResetPasswordMail($token));
-
-        return response()->json(['message' => 'Password reset link sent to your email'], 200);
-    }
-
-    public function resetPassword(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'token' => 'required|string',
-            'password' => 'required|string|min:8',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-
-        // Validate the token
-        $token = $user->tokens()->where('name', 'password-reset')->first();
-
-        if (!$token || !hash_equals($request->token, $token->plainTextToken)) {
-            return response()->json(['message' => 'Invalid token'], 401);
-        }
-
-        // Update user's password
-        $user->password = bcrypt($request->password);
-        $user->save();
-
-        // Revoke all other tokens to force logout on other devices
-        $user->tokens()->delete();
-
-        return response()->json(['message' => 'Password reset successfully'], 200);
-    }
-    public function index(Request $request)
+    
+        public function index(Request $request)
     {
         $user = $request->user();
         $permissions = $user->getAllPermissions();

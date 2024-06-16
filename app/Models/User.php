@@ -68,15 +68,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class);
-    }
 
-    public function sentFriendRequests()
-    {
-        return $this->hasMany(FriendRequest::class, 'sender_id');
-    }
+
 
     public function receivedFriendRequests()
     {
