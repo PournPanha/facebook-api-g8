@@ -13,6 +13,34 @@ use Illuminate\Support\Js;
 
 class UserController extends Controller
 {
+/**
+ * @OA\Get(
+ *     path="/api/profile",
+ *     summary="Get the authenticated user's details",
+ *     tags={"User"},
+ *     security={
+ *         {"bearerAuth": {}}
+ *     },
+ *     @OA\Response(
+ *         response=200,
+ *         description="User profile details  successfully",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="id", type="integer"),
+ *             @OA\Property(property="name", type="string"),
+ *             @OA\Property(property="email", type="string"),
+ *             @OA\Property(property="created_at", type="string"),
+ *             @OA\Property(property="updated_at", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthenticated",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="error", type="string")
+ *         )
+ *     )
+ * )
+ */
     public function show(Request $request)
     {
         if (Auth::check()) {
@@ -22,9 +50,45 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Update the user's profile.
-     */
+/**
+ * @OA\Put(
+ *     path="/api/profile/update",
+ *     summary="Update the authenticated user's profile",
+ *     tags={"User"},
+ *     security={
+ *         {"bearerAuth": {}}
+ *     },
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Updated user information",
+ *         @OA\JsonContent(
+ *             required={"name","email"},
+ *             @OA\Property(property="name", type="string"),
+ *             @OA\Property(property="email", type="string"),
+ *             @OA\Property(property="profile_image", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Profile updated successfully",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Profile updated successfully")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Validation error",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="error", type="object",
+ *                 @OA\AdditionalProperties(
+ *                     type="array",
+ *                     @OA\Items(type="string")
+ *                 )
+ *             )
+ *         )
+ *     )
+ * )
+ */
     public function update(Request $request)
     {
         $user = Auth::user();

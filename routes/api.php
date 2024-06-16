@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\FriendRequestController;
 use App\Http\Controllers\Api\LikeController;
+use App\Http\Controllers\Api\PasswordController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
@@ -27,11 +28,16 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
 
+Route::post('password/email', [AuthController::class, 'forgotPassword']);
+Route::post('password/reset', [AuthController::class, 'resetPassword']);
+
 // user route
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
 
+
+    // firend request
     Route::post('/friends/{user}/request', [FriendRequestController::class, 'sendRequest']);
     Route::post('/friends/{user}/accept', [FriendRequestController::class, 'acceptRequest']);
     Route::post('/friends/{user}/decline', [FriendRequestController::class, 'declineRequest']);
@@ -54,10 +60,6 @@ Route::post('/post/{id}/comment', [CommentController::class, 'store'])->middlewa
 Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class,'register']);
 
-
-// Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail']);
-// Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
-
 // Like route
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('posts/{post}/like', [LikeController::class, 'likePost']);
@@ -65,11 +67,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('posts/{post}/likes', [LikeController::class, 'getPostLikes']); 
 });
 
-// Route::middleware('auth')->group(function () {
-//     // Friends
-//     Route::post('/friends/{user}/request', [FriendController::class, 'sendRequest']);
-//     Route::post('/friends/{user}/accept', [FriendController::class, 'acceptRequest']);
-//     Route::post('/friends/{user}/decline', [FriendController::class, 'declineRequest']);
-//     Route::get('/friends', [FriendController::class, 'index']);
-//     Route::delete('/friends/{user}', [FriendController::class, 'remove']);
-// });

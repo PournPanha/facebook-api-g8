@@ -13,11 +13,12 @@ class Post extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title',
-        'content',
-        'auth_id',
-        'tags',
+         'user_id','title', 'content', 'image', 'video', 'tags'
     ];
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
